@@ -1,31 +1,29 @@
 import React, { useState } from "react";
 
-// Remove initial data
-const initialData = [];
+const initialData = [
+  { name: "Steve Smith", id: 211, points: 80 },
+  { name: "Jian Wong", id: 122, points: 92 },
+  { name: "Chris Peterson", id: 213, points: 91 },
+  { name: "Sai Patel", id: 524, points: 94 },
+  { name: "Andrew Whitehead", id: 425, points: 99 },
+  { name: "Lynn Roberts", id: 626, points: 90 },
+  { name: "Robert Sanders", id: 287, points: 75 },
+];
 
 function App() {
   const [data, setData] = useState(initialData);
-  const [form, setForm] = useState({ name: "", food: "", image: "" });
+  const [form, setForm] = useState({ name: "", id: "", points: "" });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setForm({ ...form, image: reader.result });
-    };
-    reader.readAsDataURL(file);
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (form.name && form.food) {
+    if (form.name && form.id && form.points) {
       setData([...data, { ...form }]);
-      setForm({ name: "", food: "", image: "" });
+      setForm({ name: "", id: "", points: "" });
     }
   };
 
@@ -52,28 +50,30 @@ function App() {
         />
         <input
           type="text"
-          name="food"
-          value={form.food}
+          name="id"
+          value={form.id}
           onChange={handleChange}
-          placeholder="Favorite Food"
+          placeholder="ID"
           className="border p-2 mr-2"
         />
         <input
-          type="file"
-          name="image"
-          onChange={handleImageChange}
+          type="text"
+          name="points"
+          value={form.points}
+          onChange={handleChange}
+          placeholder="Points"
           className="border p-2 mr-2"
         />
         <button type="submit" className="bg-blue-500 text-white p-2">
-          {form.name && form.food ? "Update" : "Add"}
+          {form.name && form.id && form.points ? "Update" : "Add"}
         </button>
       </form>
       <table className="min-w-full bg-white">
         <thead>
           <tr>
             <th className="py-2">Name</th>
-            <th className="py-2">Favorite Food</th>
-            <th className="py-2">Image</th>
+            <th className="py-2">ID</th>
+            <th className="py-2">Points</th>
             <th className="py-2">Actions</th>
           </tr>
         </thead>
@@ -81,12 +81,8 @@ function App() {
           {data.map((item, index) => (
             <tr key={index}>
               <td className="border px-4 py-2">{item.name}</td>
-              <td className="border px-4 py-2">{item.food}</td>
-              <td className="border px-4 py-2">
-                {item.image && (
-                  <img src={item.image} alt={item.food} className="w-16 h-16" />
-                )}
-              </td>
+              <td className="border px-4 py-2">{item.id}</td>
+              <td className="border px-4 py-2">{item.points}</td>
               <td className="border px-4 py-2">
                 <button
                   onClick={() => handleEdit(index)}
