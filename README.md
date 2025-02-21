@@ -7,7 +7,6 @@ This is a simple CRUD web application built with React, Vite, Tailwind CSS, and 
 ### Prerequisites
 
 - Node.js and npm installed on your machine.
-- MongoDB installed and running on your machine.
 
 ### Steps
 
