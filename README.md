@@ -12,8 +12,8 @@ This is a simple CRUD web application built with React, Vite, Tailwind CSS, and 
 ### Steps
 
 1. **Install dependencies**:
-   npm install
-   npm install mongodb
+   - npm install
+   - npm install mongodb
 
 2. **Start the backend server**:
    npm run start:server
