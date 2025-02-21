@@ -1,20 +1,17 @@
-import React, { useState } from "react";
-
-const initialData = [
-  { name: "Steve Smith", id: 211, points: 80 },
-  { name: "Jian Wong", id: 122, points: 92 },
-  { name: "Chris Peterson", id: 213, points: 91 },
-  { name: "Sai Patel", id: 524, points: 94 },
-  { name: "Andrew Whitehead", id: 425, points: 99 },
-  { name: "Lynn Roberts", id: 626, points: 90 },
-  { name: "Robert Sanders", id: 287, points: 75 },
-];
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function App() {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState([]);
   const [form, setForm] = useState({ name: "", id: "", points: "" });
   const [editIndex, setEditIndex] = useState(null);
   const [editPoints, setEditPoints] = useState("");
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/items").then((response) => {
+      setData(response.data);
+    });
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,13 +26,19 @@ function App() {
     e.preventDefault();
     if (form.name && form.id && form.points) {
       if (editIndex !== null) {
-        const updatedData = data.map((item, index) =>
-          index === editIndex ? { ...form } : item
-        );
-        setData(updatedData);
-        setEditIndex(null);
+        axios
+          .put(`http://localhost:5000/items/${data[editIndex]._id}`, form)
+          .then((response) => {
+            const updatedData = data.map((item, index) =>
+              index === editIndex ? response.data : item
+            );
+            setData(updatedData);
+            setEditIndex(null);
+          });
       } else {
-        setData([...data, { ...form }]);
+        axios.post("http://localhost:5000/items", form).then((response) => {
+          setData([...data, response.data]);
+        });
       }
       setForm({ name: "", id: "", points: "" });
     }
@@ -47,31 +50,38 @@ function App() {
   };
 
   const handleUpdate = (index) => {
-    const updatedData = data.map((item, i) =>
-      i === index ? { ...item, points: editPoints } : item
-    );
-    setData(updatedData);
-    setEditIndex(null);
-    setEditPoints("");
+    const updatedItem = { ...data[index], points: editPoints };
+    axios
+      .put(`http://localhost:5000/items/${data[index]._id}`, updatedItem)
+      .then((response) => {
+        const updatedData = data.map((item, i) =>
+          i === index ? response.data : item
+        );
+        setData(updatedData);
+        setEditIndex(null);
+        setEditPoints("");
+      });
   };
 
   const handleDelete = (index) => {
-    setData(data.filter((_, i) => i !== index));
+    axios.delete(`http://localhost:5000/items/${data[index]._id}`).then(() => {
+      setData(data.filter((_, i) => i !== index));
+    });
   };
 
   return (
-    <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
-      <h1 className="text-3xl font-bold mb-6 text-center text-blue-600">
+    <div className="container p-6 mx-auto bg-gray-100 rounded-lg shadow-lg">
+      <h1 className="mb-6 text-3xl font-bold text-center text-blue-600">
         CRUD Application
       </h1>
-      <form onSubmit={handleSubmit} className="mb-6 flex flex-col items-center">
+      <form onSubmit={handleSubmit} className="flex flex-col items-center mb-6">
         <input
           type="text"
           name="name"
           value={form.name}
           onChange={handleChange}
           placeholder="Name"
-          className="border p-3 mb-3 w-1/2 rounded-lg"
+          className="w-1/2 p-3 mb-3 border rounded-lg"
         />
         <input
           type="text"
@@ -79,7 +89,7 @@ function App() {
           value={form.id}
           onChange={handleChange}
           placeholder="ID"
-          className="border p-3 mb-3 w-1/2 rounded-lg"
+          className="w-1/2 p-3 mb-3 border rounded-lg"
         />
         <input
           type="text"
@@ -87,11 +97,11 @@ function App() {
           value={form.points}
           onChange={handleChange}
           placeholder="Points"
-          className="border p-3 mb-3 w-1/2 rounded-lg"
+          className="w-1/2 p-3 mb-3 border rounded-lg"
         />
         <button
           type="submit"
-          className="bg-green-500 text-white p-3 w-1/2 rounded-lg"
+          className="w-1/2 p-3 text-white bg-green-500 rounded-lg"
         >
           {editIndex !== null ? "Update" : "Add"}
         </button>
@@ -99,48 +109,48 @@ function App() {
       <table className="min-w-full bg-white rounded-lg shadow-lg">
         <thead>
           <tr>
-            <th className="py-3 px-4 bg-blue-200">Name</th>
-            <th className="py-3 px-4 bg-blue-200">ID</th>
-            <th className="py-3 px-4 bg-blue-200">Points</th>
-            <th className="py-3 px-4 bg-blue-200">Actions</th>
+            <th className="px-4 py-3 bg-blue-200">Name</th>
+            <th className="px-4 py-3 bg-blue-200">ID</th>
+            <th className="px-4 py-3 bg-blue-200">Points</th>
+            <th className="px-4 py-3 bg-blue-200">Actions</th>
           </tr>
         </thead>
         <tbody>
           {data.map((item, index) => (
             <tr key={index} className="text-center">
-              <td className="border px-4 py-3">{item.name}</td>
-              <td className="border px-4 py-3">{item.id}</td>
-              <td className="border px-4 py-3">
+              <td className="px-4 py-3 border">{item.name}</td>
+              <td className="px-4 py-3 border">{item.id}</td>
+              <td className="px-4 py-3 border">
                 {editIndex === index ? (
                   <input
                     type="text"
                     value={editPoints}
                     onChange={handleChangePoints}
-                    className="border p-2 rounded-lg"
+                    className="p-2 border rounded-lg"
                   />
                 ) : (
                   item.points
                 )}
               </td>
-              <td className="border px-4 py-3">
+              <td className="px-4 py-3 border">
                 {editIndex === index ? (
                   <button
                     onClick={() => handleUpdate(index)}
-                    className="bg-green-500 text-white p-2 mr-2 rounded-lg"
+                    className="p-2 mr-2 text-white bg-green-500 rounded-lg"
                   >
                     Update
                   </button>
                 ) : (
                   <button
                     onClick={() => handleEdit(index)}
-                    className="bg-yellow-500 text-white p-2 mr-2 rounded-lg"
+                    className="p-2 mr-2 text-white bg-yellow-500 rounded-lg"
                   >
                     Edit
                   </button>
                 )}
                 <button
                   onClick={() => handleDelete(index)}
-                  className="bg-red-500 text-white p-2 rounded-lg"
+                  className="p-2 text-white bg-red-500 rounded-lg"
                 >
                   Delete
                 </button>

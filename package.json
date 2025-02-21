@@ -4,17 +4,24 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "start:server": "node backend/server.js"
   },
   "dependencies": {
+    "axios": "^0.21.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mongodb": "^6.13.1",
+    "mongoose": "^5.12.3",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "dotenv": "^10.0.0"
   },
   "devDependencies": {
-    "vite": "^2.6.4",
-    "tailwindcss": "^2.2.19",
+    "@vitejs/plugin-react": "^1.0.0",
     "autoprefixer": "^10.3.7",
     "postcss": "^8.3.11",
-    "@vitejs/plugin-react": "^1.0.0"
+    "tailwindcss": "^2.2.19",
+    "vite": "^2.6.4"
   }
 }
