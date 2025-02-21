@@ -22,4 +22,4 @@ This is a simple CRUD web application built with React, Vite, Tailwind CSS, and 
    - npm run dev
 
 4. **Open the application**:
-   Open browser and navigate to `http://localhost:3000`.
+   - Open browser and navigate to `http://localhost:3000`.
